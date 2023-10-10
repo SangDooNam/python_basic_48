@@ -47,7 +47,7 @@ def get_int(prompt):
         except ValueError:
             print('Please enter integer.')
 
-def lst_of_items(lst):
+def lst_of_items(lst, name,total_1 = 0, total_2 = 0 ):
     """
     Print items from list of dictionary, typically representing warehouse inventories.
     
@@ -61,19 +61,24 @@ def lst_of_items(lst):
     print('Items in warehouse 1:')
     print()
     for dct in lst:
-        
+        total_1 += 1
         if dct['warehouse'] == 1:
             
-            print(f"{dct['state']} {dct['category']}")
+            print(f"- {dct['state']} {dct['category']}")
     print()
     print('Items in warehouse 2:')
     print()
     for dct in lst:
-        
+        total_2 += 1
         if dct['warehouse'] == 2:
             
-            print(f"{dct['state']} {dct['category']}")
-    
+            print(f"- {dct['state']} {dct['category']}")
+            
+    print()
+    print(f'Total items in warehouse 1: {total_1}')
+    print(f'Total items in warehouse 2: {total_2}')
+    print()
+    print(f'Thank you for your visit, {name}!')
             
 
 def ask_for_max(name, total, item_name):
@@ -276,7 +281,7 @@ def options(name):
             
         if query_for_options == '1':
             
-            lst_of_items(stock)
+            lst_of_items(stock, name)
             
         elif query_for_options == '2':
             
