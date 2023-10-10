@@ -92,17 +92,17 @@ def ask_for_max(name, total, item_name):
     while True:
         ask_again = input('Would you like to order the maximum available?(y/n): ')
                             
-        if ask_again not in YES_OR_NO:
+        if ask_again.lower() not in YES_OR_NO:
             
             print(f'{ask_again} is not a valid operation. please try again.')
             continue
         
-        if ask_again == 'n':
+        if ask_again.lower() == 'n':
             
             print(f'Thank you for your visit, {name}!')
             
             break
-        elif ask_again == 'y':
+        elif ask_again.lower() == 'y':
             
             print(f'{total} {item_name} have been ordered')
             print()
@@ -134,18 +134,18 @@ def ask_for_placing_order(name, total, item_name):
         
         ask_for_order = input('Would you like to order this item?(y/n): ')
         
-        if ask_for_order not in YES_OR_NO:
+        if ask_for_order.lower() not in YES_OR_NO:
             
             print(f'{ask_for_order} is not a valid operation. please try again.')
             continue
         
-        if ask_for_order == 'n':
+        if ask_for_order.lower() == 'n':
             
             print(f'Thank you for your visit, {name}!')
             
             continue_loop = False
         
-        elif ask_for_order == 'y':
+        elif ask_for_order.lower() == 'y':
             
             while True:
                 
@@ -206,7 +206,7 @@ def searching_for_item(name, total_1 = 0, total_2 = 0):
                 
                 total_1 += 1
             
-            elif looking_for_item == dct['state'].lower() + ' ' + dct['category'].lower() and dct['warehouse'] == 2:
+            elif looking_for_item.lower() == dct['state'].lower() + ' ' + dct['category'].lower() and dct['warehouse'] == 2:
                 
                 total_2 += 2
         
