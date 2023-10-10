@@ -202,11 +202,11 @@ def searching_for_item(name, total_1 = 0, total_2 = 0):
         
         for dct in stock:
             
-            if looking_for_item == dct['state'] + ' ' + dct['category'] and dct['warehouse'] == 1:
+            if looking_for_item.lower() == dct['state'].lower() + ' ' + dct['category'].lower() and dct['warehouse'] == 1:
                 
                 total_1 += 1
             
-            elif looking_for_item == dct['state'] + ' ' + dct['category'] and dct['warehouse'] == 2:
+            elif looking_for_item == dct['state'].lower() + ' ' + dct['category'].lower() and dct['warehouse'] == 2:
                 
                 total_2 += 2
         
