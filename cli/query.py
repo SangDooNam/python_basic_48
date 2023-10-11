@@ -1,16 +1,6 @@
 from data import stock
 from datetime import datetime as dt, timedelta as td
 
-"""Command line interface to query the stock.
-
-To iterate the source data you can use the following structure:
-
-for item in warehouse1:
-    # Your instructions here.
-    # The `item` name will contain each of the strings (item names) in the list.
-"""
-
-
 VALID_MENU_CHOICES = ['1', '2', '3', '4']
 YES_OR_NO = ['y', 'n']
 
@@ -182,27 +172,31 @@ def ask_for_placing_order(name, total, item_name):
                 
                 return
             
-def searching_for_item(name, total_1= 0, total_2 = 0, days_since_then1 = [], days_since_then2 = []):
+def searching_for_item(name, total_1= 0, total_2 = 0, days_since_then1 = None, days_since_then2 = None):
     """
     Search item and validate the amount of the item in each warehouse.
 
     Parameters:
     - name (str): The name of the user.
-    - total_1 (int): Total amount of the item in warehouse 1
+    - total_1 (int, default = 0): Total amount of the item in warehouse 1
     - total_2 (int): Total amount of the item in warehouse 2
-    - days_since_then1 (list): The list contains information about how many days the product has been stocked in warehouse 1.
-    - days_since_then2 (list): The list contains information about how many days the product has been stocked in warehouse 2.
+    - days_since_then1 (list, default = None): The list contains information about how many days the product has been stocked in warehouse 1.
+    - days_since_then2 (list, default = None): The list contains information about how many days the product has been stocked in warehouse 2.
     
     Returns:
     None. This function only interacts with the user via print statements and input prompts.
 
     Note:
-    The function is following the function 'option()'.
+    This function is intended to be called after 'option()'.
     This function is executed if the user selects number 2 in option().
     This function compares the amount of the searched item in each warehouse . 
     If there is no searched item it will quit the process.
-    This function makes use of list of dictionary, from data module
+    This function makes use of list of dictionary 'stock', from data module
     """
+    if days_since_then1 is None:
+        days_since_then1 = []
+    if days_since_then2 is None:
+        days_since_then2 = []
     
     while True:
         looking_for_item = input('What is the name of the item?: ')
@@ -260,14 +254,14 @@ def searching_for_item(name, total_1= 0, total_2 = 0, days_since_then1 = [], day
             ask_for_placing_order(name, total_amount,looking_for_item)
         return
     
-def browse_by_catefory(name, counter = 1, product_counter = {},product_dct = {}):
+def browse_by_category(name, counter = 1, product_counter = None,product_dct = None):
     """
     Display a menu of available product categories.
     Upon selecting a category number, it prints all products in that category along with their warehouses.
     
     Parameters:
     - name (str): The name of the user.
-    - counter (int): a numeric code for the categories
+    - counter (int, default = 1): a numeric code for the categories
     - product_counter (dict): the dictionary contains the amount of stocked product  
     - product_dct (dict): The dictionary contains numeric keys, with product names and amounts as values.
     
@@ -275,10 +269,16 @@ def browse_by_catefory(name, counter = 1, product_counter = {},product_dct = {})
     None. This function only interacts with the user via print statements and input prompts.
 
     Note:
-    The function is following the function 'option()'.
+    This function is intended to be called after 'option()'.
     This function is executed if the user selects number 3 in option().
+    This function makes use of list of dictionary 'stock', from data module
     
     """
+    if product_counter is None:
+        product_counter = {}
+    if product_dct is None:
+        product_dct = {}
+        
     for dct in stock:
         
         product = dct['category']
@@ -315,7 +315,7 @@ def browse_by_catefory(name, counter = 1, product_counter = {},product_dct = {})
                         print(f'{dict["state"]} {dict["category"]}, Warehouse 2')
     print()
     print(f'Thank you for your visit, {name}!')
-    return
+    
     
 def options(name):
     """
@@ -360,7 +360,7 @@ def options(name):
             
         elif query_for_options == '3':
             
-            browse_by_catefory(name, product_counter = {})
+            browse_by_category(name, product_counter = {})
         return
         
 
