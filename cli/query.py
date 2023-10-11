@@ -1,5 +1,5 @@
 from data import stock
-
+from datetime import datetime as dt, timedelta as td
 
 """Command line interface to query the stock.
 
@@ -11,7 +11,7 @@ for item in warehouse1:
 """
 
 
-VALID_MENU_CHOICES = ['1', '2', '3']
+VALID_MENU_CHOICES = ['1', '2', '3', '4']
 YES_OR_NO = ['y', 'n']
 
 def get_user_name():
@@ -181,8 +181,8 @@ def ask_for_placing_order(name, total, item_name):
                     break
                 
                 return
-                
-def searching_for_item(name, total_1 = 0, total_2 = 0):
+            
+def searching_for_item(name, total_1= 0, total_2 = 0, days_since_then1 = [], days_since_then2 = []):
     """
     Search item and validate the amount of the item in each warehouse.
 
@@ -190,6 +190,8 @@ def searching_for_item(name, total_1 = 0, total_2 = 0):
     - name (str): The name of the user.
     - total_1 (int): Total amount of the item in warehouse 1
     - total_2 (int): Total amount of the item in warehouse 2
+    - days_since_then1 (list): The list contains information about how many days the product has been stocked in warehouse 1.
+    - days_since_then2 (list): The list contains information about how many days the product has been stocked in warehouse 2.
     
     Returns:
     None. This function only interacts with the user via print statements and input prompts.
@@ -208,13 +210,17 @@ def searching_for_item(name, total_1 = 0, total_2 = 0):
         for dct in stock:
             
             if looking_for_item.lower() == dct['state'].lower() + ' ' + dct['category'].lower() and dct['warehouse'] == 1:
-                
+                date_of_stock_1 = [dct['date_of_stock'] for dct in stock]
+                date_1 = dt.strptime(date_of_stock_1[total_1], "%Y-%m-%d %H:%M:%S")
+                days_since_then1.append((dt.today() - date_1).days)
                 total_1 += 1
-            
-            elif looking_for_item.lower() == dct['state'].lower() + ' ' + dct['category'].lower() and dct['warehouse'] == 2:
                 
-                total_2 += 2
-        
+            elif looking_for_item.lower() == dct['state'].lower() + ' ' + dct['category'].lower() and dct['warehouse'] == 2:
+                date_of_stock_2 = [dct['date_of_stock'] for dct in stock] 
+                date_2 = dt.strptime(date_of_stock_2[total_2], "%Y-%m-%d %H:%M:%S")
+                days_since_then2.append((dt.today() - date_2).days)
+                total_2 += 1
+                
         total_amount = total_1 + total_2
         
         if total_amount == 0:
@@ -228,23 +234,88 @@ def searching_for_item(name, total_1 = 0, total_2 = 0):
         if total_1 > 0 and total_2 > 0:
             
             print(f'Amount available: {total_amount}')
-            print(f'Location: Both warehouses')
+            print(f'Location: ')
+            for i in days_since_then1:
+                print (f'- Warehose 1 (in stock for {i} days)')
+            for i in days_since_then2:
+                print (f'- Warehose 2 (in stock for {i} days)')
             print(f'Maximum availability: {total_1} in Warehouse 1')
             print(f'Maximum availability: {total_2} in Warehouse 2')
             ask_for_placing_order(name, total_amount,looking_for_item)
         elif total_1 > 0 and total_2 == 0:
             
             print(f'Amount available: {total_1}')
-            print(f'Location: Warehouse 1')
+            print(f'Location: ')
+            for i in days_since_then1:
+                print (f'- Warehose 1 (in stock for {i} days)')
             print(f'Maximum availability: {total_1} in Warehouse 1')
             ask_for_placing_order(name, total_amount,looking_for_item)
         elif total_2 > 0 and total_1 == 0:
             
             print(f'Amount available: {total_2}')
-            print(f'Location: Warehouse 2')
+            print(f'Location: ')
+            for i in days_since_then2:
+                print (f'- Warehose 2 (in stock for {i} days)')
             print(f'Maximum availability: {total_2} in Warehouse 2')
             ask_for_placing_order(name, total_amount,looking_for_item)
         return
+    
+def browse_by_catefory(name, counter = 1, product_counter = {},product_dct = {}):
+    """
+    Display a menu of available product categories.
+    Upon selecting a category number, it prints all products in that category along with their warehouses.
+    
+    Parameters:
+    - name (str): The name of the user.
+    - counter (int): a numeric code for the categories
+    - product_counter (dict): the dictionary contains the amount of stocked product  
+    - product_dct (dict): The dictionary contains numeric keys, with product names and amounts as values.
+    
+    Returns:
+    None. This function only interacts with the user via print statements and input prompts.
+
+    Note:
+    The function is following the function 'option()'.
+    This function is executed if the user selects number 3 in option().
+    
+    """
+    for dct in stock:
+        
+        product = dct['category']
+        
+        if product in product_counter:
+            
+            product_counter[product] += 1
+            
+        else:
+            
+            product_counter[product] = 1
+    
+    for key, value in product_counter.items():
+        
+        
+        product_dct[counter] = [key, value]
+        print(f'{counter}. {key} ({value})')
+        counter += 1
+    
+    prompt = get_int('Type the number of the category to browse: ')
+    print()
+    for key, value in product_dct.items():
+        
+        if prompt == key:
+            
+            for dict in stock:
+                
+                if value[0] in dict['category']:
+                    
+                    if dict['warehouse'] == 1:
+                        
+                        print(f'{dict["state"]} {dict["category"]}, Warehouse 1')
+                    else:
+                        print(f'{dict["state"]} {dict["category"]}, Warehouse 2')
+    print()
+    print(f'Thank you for your visit, {name}!')
+    return
     
 def options(name):
     """
@@ -266,9 +337,9 @@ def options(name):
     """
     while True:
     
-        query_for_options = input('What would you like to do?\n1. List items by warehouse\n2. Search an item and place an order\n3. Quit\nType the number of the operation(1\\2\\3): ')
+        query_for_options = input('What would you like to do?\n1. List items by warehouse\n2. Search an item and place an order\n3. Browse by category\n4. Quit\nType the number of the operation(1\\2\\3\\4): ')
         
-        if query_for_options == '3':
+        if query_for_options == '4':
             print(f'Thank you for your visit, {name}!')
             break
         
@@ -286,6 +357,10 @@ def options(name):
         elif query_for_options == '2':
             
             searching_for_item(name)
+            
+        elif query_for_options == '3':
+            
+            browse_by_catefory(name, product_counter = {})
         return
         
 
